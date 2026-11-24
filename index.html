@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beurteilung für das Betriebspraktikum</title>
+  <style>
+    :root {
+      --primary: #1e293b;
+      --accent: #2563eb;
+      --accent-light: #dbeafe;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --border: #cbd5e1;
+      --header-bg: #94a3b8;
+      --row-alt: #f8fafc;
+      --text: #0f172a;
+      --muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 24px 16px 48px;
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+      padding: 36px 40px;
+      border: 1px solid #e2e8f0;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 28px;
+      letter-spacing: -0.01em;
+    }
+
+    /* Tabelle exakt im Schema des Bogens */
+    .table-wrapper {
+      overflow-x: auto;
+      margin-bottom: 28px;
+      border: 1.5px solid #475569;
+      border-radius: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 520px;
+      user-select: none;
+    }
+
+    th, td {
+      border: 1px solid #64748b;
+      padding: 10px 12px;
+    }
+
+    thead tr:first-child th.empty-corner {
+      background: #ffffff;
+      border-top: none;
+      border-left: none;
+    }
+
+    thead th.note-header {
+      background-color: #9ca3af;
+      color: #111827;
+      font-weight: 700;
+      text-align: center;
+      font-size: 0.95rem;
+      padding: 6px 12px;
+    }
+
+    thead tr:nth-child(2) th {
+      background-color: #9ca3af;
+      color: #111827;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    thead th.criteria-col {
+      text-align: left;
+      width: 46%;
+    }
+
+    thead th.grade-col {
+      text-align: center;
+      width: 9%;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: var(--row-alt);
+    }
+
+    tbody tr:hover {
+      background-color: #f1f5f9;
+    }
+
+    td.criteria-name {
+      font-weight: 500;
+      color: #1e293b;
+      font-size: 0.96rem;
+    }
+
+    td.grade-cell {
+      text-align: center;
+      padding: 0;
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    td.grade-cell:hover {
+      background-color: #e2e8f0;
+    }
+
+    td.grade-cell label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 44px;
+      cursor: pointer;
+    }
+
+    td.grade-cell input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      border: 2px solid #94a3b8;
+      border-radius: 50%;
+      display: grid;
+      place-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      background: #fff;
+    }
+
+    td.grade-cell input[type="radio"]::before {
+      content: "✕";
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--accent);
+      transform: scale(0);
+      transition: 0.12s transform ease-in-out;
+      line-height: 1;
+    }
+
+    td.grade-cell input[type="radio"]:checked {
+      border-color: var(--accent);
+      background-color: var(--accent-light);
+    }
+
+    td.grade-cell input[type="radio"]:checked::before {
+      transform: scale(1);
+    }
+
+    td.grade-cell.selected {
+      background-color: #eff6ff;
+    }
+
+    /* Durchschnittsanzeige */
+    .average-card {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #ffffff;
+      border-radius: 10px;
+      padding: 22px 28px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    }
+
+    .average-info h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .average-info p {
+      font-size: 0.88rem;
+      color: #cbd5e1;
+    }
+
+    .average-badge-group {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .average-number {
+      font-size: 2.4rem;
+      font-weight: 800;
+      line-height: 1;
+      background: rgba(255, 255, 255, 0.12);
+      padding: 12px 20px;
+      border-radius: 8px;
+      min-width: 96px;
+      text-align: center;
+      letter-spacing: -0.02em;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .average-word {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #93c5fd;
+      min-width: 110px;
+    }
+
+    /* Eignung & Bemerkung (optional aus dem Schema) */
+    .extra-section {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .suitability-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      font-size: 0.98rem;
+    }
+
+    .suitability-boxes {
+      display: flex;
+      border: 1.5px solid #475569;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .suitability-boxes label {
+      padding: 8px 28px;
+      cursor: pointer;
+      font-weight: 600;
+      background: #fff;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+
+    .suitability-boxes label:first-child {
+      border-right: 1.5px solid #475569;
+    }
+
+    .suitability-boxes input[type="radio"] {
+      display: none;
+    }
+
+    .suitability-boxes label:has(input:checked) {
+      background-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .remarks-group {
+      margin-bottom: 24px;
+    }
+
+    .remarks-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+
+    .remarks-group textarea {
+      width: 100%;
+      border: 1px solid #94a3b8;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    .remarks-group textarea:focus {
+      outline: 2px solid var(--accent);
+      border-color: transparent;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    button {
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      transition: all 0.15s ease;
+    }
+
+    button:hover {
+      background: #f1f5f9;
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    button.primary:hover {
+      background: #1d4ed8;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 20px 16px;
+      }
+
+      h1 {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+      }
+
+      .average-card {
+        padding: 18px 20px;
+      }
+
+      .average-number {
+        font-size: 2rem;
+        padding: 10px 16px;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+      .container {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        max-width: 100%;
+      }
+      .actions {
+        display: none;
+      }
+      .average-card {
+        background: #f8fafc !important;
+        color: #0f172a !important;
+        border: 1.5px solid #475569;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .average-info p, .average-word {
+        color: #334155 !important;
+      }
+      .average-number {
+        border: 1px solid #475569;
+        color: #0f172a !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Beurteilung für das Betriebspraktikum</h1>
+
+    <div class="table-wrapper">
+      <table id="evaluation-table">
+        <thead>
+          <tr>
+            <th class="empty-corner"></th>
+            <th colspan="6" class="note-header">Note</th>
+          </tr>
+          <tr>
+            <th class="criteria-col">Beurteilungskriterien</th>
+            <th class="grade-col">1</th>
+            <th class="grade-col">2</th>
+            <th class="grade-col">3</th>
+            <th class="grade-col">4</th>
+            <th class="grade-col">5</th>
+            <th class="grade-col">6</th>
+          </tr>
+        </thead>
+        <tbody id="criteria-body">
+          <!-- Wird per JS aus den 13 Kriterien generiert -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="average-card" aria-live="polite">
+      <div class="average-info">
+        <h2>Gesamtdurchschnitt (Note)</h2>
+        <p id="progress-text">0 von 13 Kriterien bewertet</p>
+      </div>
+      <div class="average-badge-group">
+        <div class="average-word" id="average-label">Noch offen</div>
+        <div class="average-number" id="average-value">–</div>
+      </div>
+    </div>
+
+    <div class="extra-section">
+      <div class="suitability-row">
+        <span>Der / Die Jugendliche ist für das Berufsfeld / den Bereich geeignet:</span>
+        <div class="suitability-boxes">
+          <label>
+            <input type="radio" name="geeignet" value="ja">
+            <span>ja</span>
+          </label>
+          <label>
+            <input type="radio" name="geeignet" value="nein">
+            <span>nein</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="remarks-group">
+        <label for="bemerkung">Bemerkung:</label>
+        <textarea id="bemerkung" rows="2" placeholder="Optionale Bemerkungen..."></textarea>
+      </div>
+
+      <div class="actions">
+        <button type="button" id="reset-btn">Zurücksetzen</button>
+        <button type="button" class="primary" onclick="window.print()">Drucken / PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const criteria = [
+      "Pünktlichkeit",
+      "Zuverlässigkeit",
+      "Sorgfalt / Ordnung",
+      "Allgemeine Umgangsformen",
+      "Erscheinungsbild",
+      "Ausdauer",
+      "Fleiß",
+      "Geschicklichkeit",
+      "Team- und Kontaktfähigkeit",
+      "Arbeitstempo",
+      "Interesse",
+      "Selbständiges Arbeiten",
+      "Auffassungsvermögen"
+    ];
+
+    const tbody = document.getElementById("criteria-body");
+    const avgValueEl = document.getElementById("average-value");
+    const avgLabelEl = document.getElementById("average-label");
+    const progressTextEl = document.getElementById("progress-text");
+    const resetBtn = document.getElementById("reset-btn");
+
+    function getGradeWord(avg) {
+      if (avg < 1.5) return "Sehr gut";
+      if (avg < 2.5) return "Gut";
+      if (avg < 3.5) return "Befriedigend";
+      if (avg < 4.5) return "Ausreichend";
+      if (avg < 5.5) return "Mangelhaft";
+      return "Ungenügend";
+    }
+
+    function renderTable() {
+      tbody.innerHTML = "";
+      criteria.forEach((item, index) => {
+        const tr = document.createElement("tr");
+
+        const tdName = document.createElement("td");
+        tdName.className = "criteria-name";
+        tdName.textContent = item;
+        tr.appendChild(tdName);
+
+        for (let grade = 1; grade <= 6; grade++) {
+          const td = document.createElement("td");
+          td.className = "grade-cell";
+
+          const label = document.createElement("label");
+          label.setAttribute("aria-label", `${item}: Note ${grade}`);
+
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = `criterion_${index}`;
+          input.value = grade;
+          input.addEventListener("change", () => {
+            updateRowHighlight(tr);
+            calculateAverage();
+          });
+
+          label.appendChild(input);
+          td.appendChild(label);
+          tr.appendChild(td);
+        }
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateRowHighlight(row) {
+      const cells = row.querySelectorAll(".grade-cell");
+      cells.forEach(cell => {
+        const input = cell.querySelector("input");
+        cell.classList.toggle("selected", input.checked);
+      });
+    }
+
+    function calculateAverage() {
+      let sum = 0;
+      let count = 0;
+
+      criteria.forEach((_, index) => {
+        const checked = document.querySelector(`input[name="criterion_${index}"]:checked`);
+        if (checked) {
+          sum += parseInt(checked.value, 10);
+          count++;
+        }
+      });
+
+      progressTextEl.textContent = `${count} von ${criteria.length} Kriterien bewertet`;
+
+      if (count === 0) {
+        avgValueEl.textContent = "–";
+        avgLabelEl.textContent = "Noch offen";
+        return;
+      }
+
+      const avg = sum / count;
+      const formatted = avg.toFixed(2).replace(".", ",");
+      avgValueEl.textContent = `Ø ${formatted}`;
+      avgLabelEl.textContent = getGradeWord(avg);
+    }
+
+    resetBtn.addEventListener("click", () => {
+      document.querySelectorAll('input[type="radio"]').forEach(el => {
+        el.checked = false;
+      });
+      document.querySelectorAll(".grade-cell.selected").forEach(el => {
+        el.classList.remove("selected");
+      });
+      document.getElementById("bemerkung").value = "";
+      calculateAverage();
+    });
+
+    renderTable();
+  </script>
+</body>
+</html>
